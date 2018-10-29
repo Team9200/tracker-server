@@ -12,12 +12,12 @@ app.get('/report', function (request, response) {
     util.log("success", ip + " is request");
 
     var tokenId = request.query.tokenId;
-    var storageCapacity  = request.query.storageCapacity;
+    var storageSize  = request.query.storageSize;
     var nodeType = request.query.nodeType;
 
     switch (nodeType) {
         case 'storage':
-            PeerTable.createStorageNode(nodeType, ip, tokenId, storageCapacity)
+            PeerTable.createStorageNode(nodeType, ip, tokenId, storageSize)
                 .then((table) => {
                     return response.json({success: true});                    
                 })

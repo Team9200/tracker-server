@@ -15,20 +15,20 @@ let PeerTable = Schema({
         type: String,
         require: true
     },
-    capacity: {
-        type: String
+    storageSize: {
+        type: Number
     },
     timestamp: {
         type: Date
     }
 });
 
-PeerTable.statics.createStorageNode = function (nodeType, address, token, capacity) {
+PeerTable.statics.createStorageNode = function (nodeType, address, token, storageSize) {
     const PeerTable = new this({
         nodeType,
         address,
         token,
-        capacity
+        storageSize
     });
     
     return PeerTable.save();
