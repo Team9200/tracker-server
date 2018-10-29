@@ -3,6 +3,7 @@ const app = express();
 const uuid = require('uuid/v1');
 const config = require('./config/config.json');
 const util = require('./util/util');
+const database = require('./database');
 const PeerTable = require('./database/models/PeerTable');
 
 app.get('/report', function (request, response) {
@@ -60,4 +61,5 @@ app.get('/requestInfo', function (request, response) {
 
 app.listen(config.port, function () {
     util.log("success", "server on!");
+    database();
 });

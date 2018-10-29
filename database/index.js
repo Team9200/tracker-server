@@ -4,7 +4,9 @@ const util = require('../util/util');
 
 module.exports = () => {
     mongoose.Promise = global.Promise;
-    mongoose.connect(config.db.url);
+    mongoose.connect(config.db.url, {
+        useNewUrlParser: true
+    });
     mongoose.connection.on('error', console.error.bind(console, 'mongoose connection error'));
     mongoose.connection.on('open', function () {
         util.log('success', 'connected to database');
