@@ -24,6 +24,7 @@ app.get('/report', function (request, response) {
                 .catch((error) => {
                     return response.json({success: false, message: error});
                 });
+
             break;
         case 'analysis':
             PeerTable.createAnalysisNode(nodeType, ip, tokenId)
@@ -33,12 +34,28 @@ app.get('/report', function (request, response) {
                 .catch((error) => {
                     return response.json({success: false, message: error});
                 });
+
             break;
         default:
             reponse.json({success: false, message: 'Invalid nodeType'});
             break;
     }
 
+});
+
+app.get('/requestInfo', function (request, response) {
+    var nodeType = request.query.nodeType;
+    var tokenId = request.query.tokenId;
+    var connectionToken = uuidvi();
+    
+    switch (nodeType) {
+        case 'storage':
+            break;
+        case 'analysis':
+            break;
+        default:
+            break;
+    }
 });
 
 app.listen(config.port, function () {
