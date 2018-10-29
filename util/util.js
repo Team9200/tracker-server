@@ -1,5 +1,5 @@
 module.exports = {
-    log: (message, type) => {
+    log: (type, message) => {
         if (type == "success") {
             console.log((new Date()) + "\t" + message);
         } else if (type == "error") {

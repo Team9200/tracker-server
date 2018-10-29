@@ -3,14 +3,13 @@ const app = express();
 const uuid = require('uuid/v1');
 const config = require('./config/config.json');
 const util = require('./util/util');
-
-
+const PeerTable = require('./database/models/PeerTable');
 
 app.get('/report', function (request, response) {
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 
             req.socket.remoteAddress || req.connection.socket.remoteAddress;
 
-    util.log(ip + " is request", "success");
+    util.log("success", ip + " is request");
 
     var tokenId = request.query.tokenId;
     var storageCapacity  = request.query.storageCapacity;
@@ -18,12 +17,22 @@ app.get('/report', function (request, response) {
 
     switch (nodeType) {
         case 'storage':
-            // TODO: Insert DB
-            response.json({success: true});
+            PeerTable.createStorageNode(nodeType, ip, tokenId, storageCapacity)
+                .then((table) => {
+                    return response.json({success: true});                    
+                })
+                .catch((error) => {
+                    return response.json({success: false, message: error});
+                });
             break;
         case 'analysis':
-            // TODO: Insert DB
-            response.json({success: true});
+            PeerTable.createAnalysisNode(nodeType, ip, tokenId)
+                .then((table) => {
+                    return response.json({success: true});
+                })
+                .catch((error) => {
+                    return response.json({success: false, message: error});
+                });
             break;
         default:
             reponse.json({success: false, message: 'Invalid nodeType'});
@@ -33,5 +42,5 @@ app.get('/report', function (request, response) {
 });
 
 app.listen(config.port, function () {
-    util.log("server on!", "success");
+    util.log("success", "server on!");
 });
