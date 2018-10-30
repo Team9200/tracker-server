@@ -12,13 +12,13 @@ app.get('/report', function (request, response) {
 
     util.log("success", ip + " is request");
 
-    var tokenId = request.query.tokenId;
+    var peerId = request.query.peerId;
     var storageSize  = request.query.storageSize;
     var nodeType = request.query.nodeType;
 
     switch (nodeType) {
         case 'storage':
-            PeerTable.createStorageNode(nodeType, ip, tokenId, storageSize)
+            PeerTable.createStorageNode(peerId, nodeType, ip, storageSize)
                 .then((table) => {
                     return response.json({success: true});                    
                 })
@@ -28,7 +28,7 @@ app.get('/report', function (request, response) {
 
             break;
         case 'analysis':
-            PeerTable.createAnalysisNode(nodeType, ip, tokenId)
+            PeerTable.createAnalysisNode(peerId, nodeType, ip)
                 .then((table) => {
                     return response.json({success: true});
                 })
@@ -45,17 +45,19 @@ app.get('/report', function (request, response) {
 });
 
 app.get('/requestInfo', function (request, response) {
-    var nodeType = request.query.nodeType;
-    var tokenId = request.query.tokenId;
-    var connectionToken = uuidvi();
+    var peerId = request.query.peerId;
     
-    switch (nodeType) {
-        case 'storage':
-            break;
-        case 'analysis':
-            break;
-        default:
-            break;
+    if (peerId !== undefined || peerId !== "") {
+        PeerTable.findPeer(peerId)
+            .then((peer) => {
+                return response.json({success: true, message: peer})
+            })
+            .catch((error) => {
+                return response.json({success: false, message: error});
+            });
+
+    } else {
+        return response.json({success: false, message: "no peerId"});
     }
 });
 

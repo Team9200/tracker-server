@@ -2,16 +2,17 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 let PeerTable = Schema({
+    id: {
+        type: String,
+        require: true,
+        unique: true
+    },
     nodeType: {
         type: String,
         require: true,
         enum: ["storage", "analysis"]
     },
     address: {
-        type: String,
-        require: true
-    },
-    token: {
         type: String,
         require: true
     },
@@ -23,25 +24,29 @@ let PeerTable = Schema({
     }
 });
 
-PeerTable.statics.createStorageNode = function (nodeType, address, token, storageSize) {
+PeerTable.statics.createStorageNode = function (id, nodeType, address, storageSize) {
     const PeerTable = new this({
+        id,
         nodeType,
         address,
-        token,
         storageSize
     });
     
     return PeerTable.save();
 }
 
-PeerTable.statics.createAnalysisNode = function (nodeType, address, token) {
+PeerTable.statics.createAnalysisNode = function (id, nodeType, address) {
     const PeerTable = new this({
+        id,
         nodeType,
-        address,
-        token
+        address
     });
     
     return PeerTable.save();
+}
+
+PeerTable.statics.findPeer = function (peerId) {
+    return PeerTable.findOne({id: peerId});
 }
 
 module.exports = mongoose.model('PeerTable', PeerTable);
