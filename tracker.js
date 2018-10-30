@@ -7,8 +7,8 @@ const database = require('./database');
 const PeerTable = require('./database/models/PeerTable');
 
 app.get('/report', function (request, response) {
-    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 
-            req.socket.remoteAddress || req.connection.socket.remoteAddress;
+    var ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress || 
+    request.socket.remoteAddress || request.connection.socket.remoteAddress;
 
     util.log("success", ip + " is request");
 
