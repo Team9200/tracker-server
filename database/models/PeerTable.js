@@ -46,7 +46,7 @@ PeerTable.statics.createAnalysisNode = function (id, nodeType, address) {
 }
 
 PeerTable.statics.findPeer = function (peerId) {
-    return PeerTable.findOne({id: peerId});
+    return this.findOne({id: peerId});
 }
 
 module.exports = mongoose.model('PeerTable', PeerTable);
