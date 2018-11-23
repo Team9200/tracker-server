@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 let PeerTable = Schema({
+    expire: {
+        type: Date,
+        default: Date.now
+    },
     id: {
         type: String,
         require: true,
@@ -22,13 +26,23 @@ let PeerTable = Schema({
     mining: {
         type: String,
         enum: ["true", "flase"]
-    },
-    timestamp: {
-        type: Date
     }
 });
 
 PeerTable.statics.createStorageNode = function (id, nodeType, address, storageSize, mining) {
+    const PeerTable = new this({
+        id,
+        nodeType,
+        address,
+        storageSize,
+        mining
+    });
+    
+    return PeerTable.save();
+}
+
+PeerTable.statics.updateStorageNode = function (id, nodeType, address, storageSize, mining) {
+    this.remove({id:id}).exec();
     const PeerTable = new this({
         id,
         nodeType,

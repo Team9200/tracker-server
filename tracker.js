@@ -22,9 +22,25 @@ app.get('/report', function (request, response) {
 
     switch (nodeType) {
         case 'storage':
-            PeerTable.createStorageNode(peerId, nodeType, ip, storageSize, mining)
-                .then((table) => {
-                    return response.json({success: true});                    
+            PeerTable.findPeer(peerId)
+                .then((peer) => {
+                    if (peer) {
+                        PeerTable.updateStorageNode(peerId, nodeType, ip, storageSize, mining)
+                            .then((table) => {
+                                return response.json({success: true});                    
+                            })
+                            .catch((error) => {
+                                return response.json({success: false, message: error});
+                            });
+                    } else {
+                        PeerTable.createStorageNode(peerId, nodeType, ip, storageSize, mining)
+                            .then((table) => {
+                                return response.json({success: true});                    
+                            })
+                            .catch((error) => {
+                                return response.json({success: false, message: error});
+                            });
+                    }
                 })
                 .catch((error) => {
                     return response.json({success: false, message: error});
