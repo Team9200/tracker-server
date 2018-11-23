@@ -19,17 +19,22 @@ let PeerTable = Schema({
     storageSize: {
         type: Number
     },
+    mining: {
+        type: String,
+        enum: ["true", "flase"]
+    },
     timestamp: {
         type: Date
     }
 });
 
-PeerTable.statics.createStorageNode = function (id, nodeType, address, storageSize) {
+PeerTable.statics.createStorageNode = function (id, nodeType, address, storageSize, mining) {
     const PeerTable = new this({
         id,
         nodeType,
         address,
-        storageSize
+        storageSize,
+        mining
     });
     
     return PeerTable.save();
@@ -47,6 +52,10 @@ PeerTable.statics.createAnalysisNode = function (id, nodeType, address) {
 
 PeerTable.statics.findPeer = function (peerId) {
     return this.findOne({id: peerId});
+}
+
+PeerTable.statics.findStorage = function () {
+    return this.find();
 }
 
 module.exports = mongoose.model('PeerTable', PeerTable);
