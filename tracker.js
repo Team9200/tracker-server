@@ -59,8 +59,6 @@ app.get('/requestInfo', function (request, response) {
     var senderPeerId = request.query.senderPeerId;
     var receiverPeerId = request.query.receiverPeerId;
     
-    senderPeerId = senderPeerId.replace("::ffff:", "");
-
     if (senderPeerId !== undefined || senderPeerId !== "" || receiverPeerId !== undefined || receiverPeerId !== "") {
         PeerTable.findPeer(receiverPeerId)
             .then((peer) => {
