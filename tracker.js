@@ -97,6 +97,7 @@ app.get('/requestStorage', function (request, response) {
                         break;
                     }
                 }
+                peer[j].replace("::ffff:", "");
             }
             return response.json({success: true, peerId: selectedStorage, peerURL: peer[j].address+":19200#"+senderPeerId});
         })
