@@ -8,7 +8,7 @@ const PeerTable = require('./database/models/PeerTable');
 var storageNodes = {};
 var selectedStorage;
 
-// 노드 정보 보고 기능
+// 노드 Report 기능
 app.get('/report', function (request, response) {
     var ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress || 
     request.socket.remoteAddress || request.connection.socket.remoteAddress;
@@ -27,7 +27,7 @@ app.get('/report', function (request, response) {
                     if (peer) {
                         PeerTable.updateStorageNode(peerId, nodeType, ip, storageSize, mining)
                             .then((table) => {
-                                return response.json({success: true});                    
+                                return response.json({success: true});
                             })
                             .catch((error) => {
                                 return response.json({success: false, message: error});
@@ -35,7 +35,7 @@ app.get('/report', function (request, response) {
                     } else {
                         PeerTable.createStorageNode(peerId, nodeType, ip, storageSize, mining)
                             .then((table) => {
-                                return response.json({success: true});                    
+                                return response.json({success: true});
                             })
                             .catch((error) => {
                                 return response.json({success: false, message: error});
@@ -45,17 +45,6 @@ app.get('/report', function (request, response) {
                 .catch((error) => {
                     return response.json({success: false, message: error});
                 });
-
-            break;
-        case 'analysis':
-            PeerTable.createAnalysisNode(peerId, nodeType, ip)
-                .then((table) => {
-                    return response.json({success: true});
-                })
-                .catch((error) => {
-                    return response.json({success: false, message: error});
-                });
-
             break;
         default:
             reponse.json({success: false, message: 'Invalid nodeType'});
@@ -63,7 +52,7 @@ app.get('/report', function (request, response) {
     }
 });
 
-// 노드가 살아있는지 확인
+// 노드 파일 전송 기능
 app.get('/requestInfo', function (request, response) {
     var senderPeerId = request.headers['x-forwarded-for'] || request.connection.remoteAddress || 
     request.socket.remoteAddress || request.connection.socket.remoteAddress;
@@ -73,7 +62,6 @@ app.get('/requestInfo', function (request, response) {
         PeerTable.findPeer(receiverPeerId)
             .then((peer) => {
                 if (peer) {
-                    // ToDo: 받는 사람에게 receiver의 peerId를 보내 같은 URL에 접속하도록 해야함
                     return response.json({success: true, peerId: peer.id, peerURL: peer.address+":19200#"+senderPeerId});
                 } else {
                     return response.json({success: false});
@@ -87,7 +75,7 @@ app.get('/requestInfo', function (request, response) {
     }
 });
 
-// 콜렉터가 스토리지에게 보낼 때 랜덤으로 스토리지를 선택
+// 콜렉터 -> 스토리지 랜덤 선정 및 파일 전송 기능
 app.get('/requestStorage', function (request, response) {
     var senderPeerId = request.headers['x-forwarded-for'] || request.connection.remoteAddress || 
     request.socket.remoteAddress || request.connection.socket.remoteAddress;
@@ -110,7 +98,6 @@ app.get('/requestStorage', function (request, response) {
                     }
                 }
             }
-            // ToDo: 받는 사람에게 receiver의 peerId를 보내 같은 URL에 접속하도록 해야함
             return response.json({success: true, peerId: selectedStorage, peerURL: peer[j].address+":19200#"+senderPeerId});
         })
         .catch((error) => {
