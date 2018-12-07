@@ -13,6 +13,8 @@ app.get('/report', function (request, response) {
     var ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress || 
     request.socket.remoteAddress || request.connection.socket.remoteAddress;
 
+    ip = ip.replace("::ffff:", "");
+    
     util.log("success", ip + " is request");
 
     var peerId = request.query.peerId;
@@ -97,7 +99,6 @@ app.get('/requestStorage', function (request, response) {
                         break;
                     }
                 }
-                peer[j].replace("::ffff:", "");
             }
             return response.json({success: true, peerId: selectedStorage, peerURL: peer[j].address+":19200#"+senderPeerId});
         })
