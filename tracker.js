@@ -84,7 +84,7 @@ app.get('/requestStorage', function (request, response) {
     var senderPeerId = request.headers['x-forwarded-for'] || request.connection.remoteAddress || 
     request.socket.remoteAddress || request.connection.socket.remoteAddress;
 
-    senderPeerId.replace("::ffff:", "");
+    senderPeerId = senderPeerId.replace("::ffff:", "");
 
     var sumStorageSize = 0;
     var checkSumStorageSize = 0;
