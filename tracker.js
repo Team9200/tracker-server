@@ -14,7 +14,7 @@ app.get('/report', function (request, response) {
     request.socket.remoteAddress || request.connection.socket.remoteAddress;
 
     ip = ip.replace("::ffff:", "");
-    
+
     util.log("success", ip + " is request");
 
     var peerId = request.query.peerId;
@@ -60,6 +60,8 @@ app.get('/requestInfo', function (request, response) {
     request.socket.remoteAddress || request.connection.socket.remoteAddress;
     var receiverPeerId = request.query.receiverPeerId;
     
+    senderPeerId = senderPeerId.replace("::ffff:", "");
+
     if (senderPeerId !== undefined || senderPeerId !== "" || receiverPeerId !== undefined || receiverPeerId !== "") {
         PeerTable.findPeer(receiverPeerId)
             .then((peer) => {
@@ -81,6 +83,9 @@ app.get('/requestInfo', function (request, response) {
 app.get('/requestStorage', function (request, response) {
     var senderPeerId = request.headers['x-forwarded-for'] || request.connection.remoteAddress || 
     request.socket.remoteAddress || request.connection.socket.remoteAddress;
+
+    senderPeerId.replace("::ffff:", "");
+
     var sumStorageSize = 0;
     var checkSumStorageSize = 0;
     var randValue = 0;
