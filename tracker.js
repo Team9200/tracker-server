@@ -105,10 +105,10 @@ app.get('/sendToStorage', function (request, response) {
                         }
                     }
                 }
-                var options = new URL('http://' + peer.address + ':39200/sendRequest?roomName=' + senderPeerId);
+                var options = new URL('http://' + peer[j].address + ':39200/sendRequest?roomName=' + senderPeerId);
                 http.request(options, function(res) {
                 }).end();
-                return response.json({success: true, peerId: selectedStorage, SignalingServerURL: peer.address+":19200", roomName : senderPeerId});
+                return response.json({success: true, peerId: selectedStorage, SignalingServerURL: peer[j].address+":19200", roomName : senderPeerId});
             })
             .catch((error) => {
                 return response.json({success: false, message: error});
