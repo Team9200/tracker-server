@@ -14,7 +14,6 @@ app.get('/report', function (request, response) {
     request.socket.remoteAddress || request.connection.socket.remoteAddress;
 
     ip = ip.replace("::ffff:", "");
-
     util.log("success", ip + " is request");
 
     var peerId = request.query.peerId;
