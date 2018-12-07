@@ -56,8 +56,7 @@ app.get('/report', function (request, response) {
 
 // 노드 파일 전송 기능
 app.get('/requestInfo', function (request, response) {
-    var senderPeerId = request.headers['x-forwarded-for'] || request.connection.remoteAddress || 
-    request.socket.remoteAddress || request.connection.socket.remoteAddress;
+    var senderPeerId = request.query.senderPeerId;
     var receiverPeerId = request.query.receiverPeerId;
     
     senderPeerId = senderPeerId.replace("::ffff:", "");
@@ -81,11 +80,7 @@ app.get('/requestInfo', function (request, response) {
 
 // 콜렉터 -> 스토리지 랜덤 선정 및 파일 전송 기능
 app.get('/requestStorage', function (request, response) {
-    var senderPeerId = request.headers['x-forwarded-for'] || request.connection.remoteAddress || 
-    request.socket.remoteAddress || request.connection.socket.remoteAddress;
-
-    senderPeerId = senderPeerId.replace("::ffff:", "");
-
+    var senderPeerId = request.query.senderPeerId;
     var sumStorageSize = 0;
     var checkSumStorageSize = 0;
     var randValue = 0;
