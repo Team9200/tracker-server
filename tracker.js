@@ -5,6 +5,7 @@ const util = require('./util/util');
 const database = require('./database');
 const PeerTable = require('./database/models/PeerTable');
 const http = require('http');
+const URL = require('url').URL;
 
 var storageNodes = {};
 var selectedStorage;
@@ -65,9 +66,13 @@ app.get('/storageToStorage', function (request, response) {
         PeerTable.findPeer(receiverPeerId)
             .then((peer) => {
                 if (peer) {
-                    var options = new URL('http://' + peer.address + ':39200/sendRequest?roomName=' + senderPeerId);
-                    http.request(options, function(res) {
-                    }).end();
+                    try{
+                        var options = new URL('http://' + peer.address + ':39200/sendRequest?roomName=' + senderPeerId);
+                        http.request(options, function(res) {
+                        }).end();
+                    } catch(e) {
+                        console.log(e);
+                    }
                     return response.json({success: true, peerId: peer.id, SignalingServerURL: peer.address+":19200", roomName : senderPeerId});
                 } else {
                     return response.json({success: false});
@@ -105,9 +110,15 @@ app.get('/sendToStorage', function (request, response) {
                         }
                     }
                 }
-                var options = new URL('http://' + peer[j].address + ':39200/sendRequest?roomName=' + senderPeerId);
-                http.request(options, function(res) {
-                }).end();
+                console.log('test');
+                try{
+                    var options = new URL('http://' + peer[j].address + ':39200/sendRequest?roomName=' + senderPeerId);
+                    http.request(options, function(res) {
+                    }).end();
+                } catch(e) {
+                    console.log(e);
+                }
+                console.log('test2');
                 return response.json({success: true, peerId: selectedStorage, SignalingServerURL: peer[j].address+":19200", roomName : senderPeerId});
             })
             .catch((error) => {
