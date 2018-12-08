@@ -72,7 +72,7 @@ app.get('/storageToStorage', function (request, response) {
                         http.request(options, function(res) {
                         }).end();
                     } catch(e) {
-                        console.log(e);
+                        util.log(e);
                     }
                     return response.json({success: true, peerId: peer.id, SignalingServerURL: peer.address+":19200", roomName : senderPeerId});
                 } else {
@@ -114,10 +114,10 @@ app.get('/sendToStorage', function (request, response) {
                 try{
                     var options = new URL('http://' + peer[j].address + ':39200/sendRequest?roomName=' + senderPeerId);
                     http.request(options, function(res) {
-                        console.log('http request to Storage Node (' + peer[j].address + ')');
+                        util.log('http request to Storage Node (' + peer[j].address + ')');
                     }).end();
                 } catch(e) {
-                    console.log(e);
+                    util.log(e);
                 }
                 return response.json({success: true, peerId: selectedStorage, SignalingServerURL: peer[j].address+":19200", roomName : senderPeerId});
             })
@@ -127,6 +127,22 @@ app.get('/sendToStorage', function (request, response) {
     } else {
         return response.json({success: false, message: "no peerId"});
     }
+});
+
+app.get('/api/Data', function (request, response) {
+    PeerTable.findStorage()
+        .then((data) => {
+            return response.json({
+                success: true,
+                message: data
+            })
+        })
+        .catch((error) => {
+            return response.json({
+                success: false,
+                message: error
+            })
+        });
 });
 
 app.listen(config.port, function () {
