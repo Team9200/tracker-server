@@ -110,7 +110,6 @@ app.get('/sendToStorage', function (request, response) {
                         }
                     }
                 }
-                console.log('test');
                 try{
                     var options = new URL('http://' + peer[j].address + ':39200/sendRequest?roomName=' + senderPeerId);
                     http.request(options, function(res) {
@@ -118,7 +117,6 @@ app.get('/sendToStorage', function (request, response) {
                 } catch(e) {
                     console.log(e);
                 }
-                console.log('test2');
                 return response.json({success: true, peerId: selectedStorage, SignalingServerURL: peer[j].address+":19200", roomName : senderPeerId});
             })
             .catch((error) => {
