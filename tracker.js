@@ -72,7 +72,7 @@ app.get('/storageToStorage', function (request, response) {
                         http.request(options, function(res) {
                         }).end();
                     } catch(e) {
-                        util.log(e);
+                        console.log(e);
                     }
                     return response.json({success: true, peerId: peer.id, SignalingServerURL: peer.address+":19200", roomName : senderPeerId});
                 } else {
@@ -114,10 +114,10 @@ app.get('/sendToStorage', function (request, response) {
                 try{
                     var options = new URL('http://' + peer[j].address + ':39200/sendRequest?roomName=' + senderPeerId);
                     http.request(options, function(res) {
-                        util.log('http request to Storage Node (' + peer[j].address + ')');
+                        console.log('http request to Storage Node (' + peer[j].address + ')');
                     }).end();
                 } catch(e) {
-                    util.log(e);
+                    console.log(e);
                 }
                 return response.json({success: true, peerId: selectedStorage, SignalingServerURL: peer[j].address+":19200", roomName : senderPeerId});
             })
