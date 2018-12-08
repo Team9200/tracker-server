@@ -23,13 +23,16 @@ let PeerTable = Schema({
     storageSize: {
         type: Number
     },
+    remainingStorageSize: {
+        type: Number
+    },
     mining: {
         type: String,
         enum: ["true", "flase"]
     }
 });
 
-PeerTable.statics.createStorageNode = function (id, nodeType, address, storageSize, mining) {
+PeerTable.statics.createStorageNode = function (id, nodeType, address, storageSize, remainingStorageSize, mining) {
     const PeerTable = new this({
         id,
         nodeType,
@@ -41,7 +44,7 @@ PeerTable.statics.createStorageNode = function (id, nodeType, address, storageSi
     return PeerTable.save();
 }
 
-PeerTable.statics.updateStorageNode = function (id, nodeType, address, storageSize, mining) {
+PeerTable.statics.updateStorageNode = function (id, nodeType, address, storageSize, remainingStorageSize, mining) {
     this.remove({id:id}).exec();
     const PeerTable = new this({
         id,

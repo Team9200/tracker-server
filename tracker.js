@@ -11,7 +11,7 @@ var storageNodes = {};
 var selectedStorage;
 
 // Storage Node -> Tracker Server [Report 기능]
-// http://트래커서버ip:29200/report?peerId=피어id&nodeType=storage&storageSize=스토리지사이즈&mining=마이닝여부
+// http://트래커서버ip:29200/report?peerId=피어id&nodeType=storage&storageSize=스토리지사이즈&remainingStorageSize=남은스토리지사이즈&mining=마이닝여부
 app.get('/report', function (request, response) {
     var ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress || 
     request.socket.remoteAddress || request.connection.socket.remoteAddress;
@@ -29,7 +29,7 @@ app.get('/report', function (request, response) {
             PeerTable.findPeer(peerId)
                 .then((peer) => {
                     if (peer) {
-                        PeerTable.updateStorageNode(peerId, nodeType, ip, storageSize, mining)
+                        PeerTable.updateStorageNode(peerId, nodeType, ip, storageSize, remainingStorageSize, mining)
                             .then((table) => {
                                 return response.json({success: true});
                             })
@@ -37,7 +37,7 @@ app.get('/report', function (request, response) {
                                 return response.json({success: false, message: error});
                             });
                     } else {
-                        PeerTable.createStorageNode(peerId, nodeType, ip, storageSize, mining)
+                        PeerTable.createStorageNode(peerId, nodeType, ip, storageSize, remainingStorageSize, mining)
                             .then((table) => {
                                 return response.json({success: true});
                             })
