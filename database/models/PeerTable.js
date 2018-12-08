@@ -38,6 +38,7 @@ PeerTable.statics.createStorageNode = function (id, nodeType, address, storageSi
         nodeType,
         address,
         storageSize,
+        remainingStorageSize,
         mining
     });
     
@@ -51,6 +52,7 @@ PeerTable.statics.updateStorageNode = function (id, nodeType, address, storageSi
         nodeType,
         address,
         storageSize,
+        remainingStorageSize,
         mining
     });
     
