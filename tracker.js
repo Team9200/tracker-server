@@ -114,6 +114,7 @@ app.get('/sendToStorage', function (request, response) {
                 try{
                     var options = new URL('http://' + peer[j].address + ':39200/sendRequest?roomName=' + senderPeerId);
                     http.request(options, function(res) {
+                        console.log('http request to Storage Node (' + peer[j].address + ')');
                     }).end();
                 } catch(e) {
                     console.log(e);
