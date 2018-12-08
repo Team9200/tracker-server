@@ -22,6 +22,7 @@ app.get('/report', function (request, response) {
     var peerId = request.query.peerId;
     var nodeType = request.query.nodeType;
     var storageSize  = request.query.storageSize;
+    var remainingStorageSize  = request.query.remainingStorageSize;
     var mining = request.query.mining;
 
     switch (nodeType) {
