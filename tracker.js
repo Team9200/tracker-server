@@ -16,6 +16,7 @@ app.get('/report', function (request, response) {
     var ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress || 
     request.socket.remoteAddress || request.connection.socket.remoteAddress;
     ip = ip.replace("::ffff:", "");
+    ip = ip.replace("::1", "127.0.0.1");
 
     util.log("success", ip + " is reporting");
 
@@ -71,9 +72,10 @@ app.get('/storageToStorage', function (request, response) {
                         var options = new URL('http://' + peer.address + ':39200/sendRequest?roomName=' + senderPeerId);
                         http.request(options, function(res) {
                         }).end();
-                    } catch(e) {
-                        console.log(e);
+                    } catch(error) {
+                        util.log("error", error);
                     }
+                    util.log('Storage Node to Storage Node (' + peer.address + ')');
                     return response.json({success: true, peerId: peer.id, SignalingServerURL: peer.address+":19200", roomName : senderPeerId});
                 } else {
                     return response.json({success: false});
@@ -114,10 +116,10 @@ app.get('/sendToStorage', function (request, response) {
                 try{
                     var options = new URL('http://' + peer[j].address + ':39200/sendRequest?roomName=' + senderPeerId);
                     http.request(options, function(res) {
-                        console.log('http request to Storage Node (' + peer[j].address + ')');
+                        util.log("success", 'Send to Storage Node (' + peer[j].address + ')');
                     }).end();
-                } catch(e) {
-                    console.log(e);
+                } catch(error) {
+                    console.log("error", error);
                 }
                 return response.json({success: true, peerId: selectedStorage, SignalingServerURL: peer[j].address+":19200", roomName : senderPeerId});
             })
@@ -127,6 +129,51 @@ app.get('/sendToStorage', function (request, response) {
     } else {
         return response.json({success: false, message: "no peerId"});
     }
+});
+
+// Storage Node -> Storage Node [파일을 가지고 있는 Storage Node의 peerId 찾기]
+// http://트래커서버ip:29200/findFile?fileHash=찾는파일SHA256해쉬
+app.get('/findFile', function(request, response) {
+    var fileHash = request.query.fileHash;
+    var checkValue = 0;
+    PeerTable.findStorage()
+        .then((peer) => {
+            if (peer) {
+                for (var i = 0; i < peer.length; i++) {
+                    try{
+                        var options = new URL('http://'+ peer[i].address +':39200/findFile?fileHash=' + fileHash);
+                        http.request(options, function(res) {
+                            var body = '';
+                            res.on('data', function(data) {
+                                body += data;
+                            });
+
+                            res.on('end', function(data) {
+                                if (body == "success") {
+                                    checkValue = checkValue + 1;
+                                    util.log("success", 'Find File at Storage Node (' + peer[i].id + ')');
+                                    return response.json({success: true, storagePeerId: peer[i].id});
+                                }
+                                else if (body == "fail") {
+                                    return response.json({success: false});
+                                }
+                                else {
+                                    return response.json({success: false});
+                                }
+                            });
+                        }).end();
+                    } catch(error) {
+                        util.log("error", error);
+                        return response.json({success: false, message: error});
+                    } finally {
+                        break;
+                    }
+                }
+            }
+        })
+        .catch((error) => {
+            return response.json({success: false, message: error});
+        });
 });
 
 app.get('/api/Data', function (request, response) {

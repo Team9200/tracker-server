@@ -77,4 +77,5 @@ PeerTable.statics.findStorage = function () {
     return this.find();
 }
 
-module.exports = mongoose.model('PeerTable', PeerTable);
+var PeerTableModel = mongoose.model('PeerTable', PeerTable);
+module.exports = PeerTableModel;
