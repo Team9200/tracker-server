@@ -59,16 +59,6 @@ PeerTable.statics.updateStorageNode = function (id, nodeType, address, storageSi
     return PeerTable.save();
 }
 
-PeerTable.statics.createAnalysisNode = function (id, nodeType, address) {
-    const PeerTable = new this({
-        id,
-        nodeType,
-        address
-    });
-    
-    return PeerTable.save();
-}
-
 PeerTable.statics.findPeer = function (peerId) {
     return this.findOne({id: peerId});
 }
