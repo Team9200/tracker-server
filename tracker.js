@@ -133,6 +133,7 @@ app.get('/sendToStorage', function (request, response) {
                         }).end();
                     } catch(error) {
                         console.log("error", error);
+                        return response.json({success: false, message: error});
                     }
                     return response.json({success: true, peerId: selectedStorage, SignalingServerURL: peer[j].address+":19200", roomName : senderPeerId});
                 }
