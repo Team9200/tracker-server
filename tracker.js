@@ -110,7 +110,7 @@ app.get('/sendToStorage', function (request, response) {
     var sumStorageSize = 0;
     var checkSumStorageSize = 0;
     var randValue = 0;
-    if (senderPeerId !== undefined || senderPeerId !== "" || receiverPeerId !== undefined || receiverPeerId !== "") {
+    if (senderPeerId !== undefined || senderPeerId !== "") {
         PeerTable.findStorage()
             .then((peer) => {
                 if (peer) {
@@ -132,7 +132,7 @@ app.get('/sendToStorage', function (request, response) {
                             util.log("success", 'Send to Storage Node (' + peer[j].address + ')');
                         }).end();
                     } catch(error) {
-                        console.log("error", error);
+                        util.log("error", error);
                         return response.json({success: false, message: error});
                     }
                     return response.json({success: true, peerId: selectedStorage, SignalingServerURL: peer[j].address+":19200", roomName : senderPeerId});
@@ -189,6 +189,50 @@ app.get('/findFile', function(request, response) {
         .catch((error) => {
             return response.json({success: false, message: error});
         });
+});
+
+// Analysis Node -> Storage Node -> Analysis Node [스토리지 랜덤 선택 및 파일 요청 및 전송 기능]
+// http://트래커서버ip:29200/reqUnknownFileToStorage?peerId=보내는피어id
+app.get('/reqUnknownFileToStorage', function (request, response) {
+    var peerId = request.query.peerId;
+    var sumStorageSize = 0;
+    var checkSumStorageSize = 0;
+    var randValue = 0;
+    if (peerId !== undefined || peerId !== "") {
+        PeerTable.findStorage()
+            .then((peer) => {
+                if (peer) {
+
+                    for (var i = 0; i < peer.length; i++) {
+                        sumStorageSize = sumStorageSize + peer[i].storageSize;
+                        storageNodes[peer[i].id] = peer[i].storageSize;
+                    }
+                    randValue = Math.floor(Math.random() * sumStorageSize) + 1;
+                    for (var j = 0; j < peer.length; j++) {
+                        checkSumStorageSize = checkSumStorageSize + peer[j].storageSize;
+                        if (randValue <= checkSumStorageSize) {
+                            selectedStorage = peer[j].id;
+                            break;
+                        }
+                    }
+                    try{
+                        var options = new URL('http://' + peer[j].address + ':39200/UnknownStoA?peerId=' + peerId);
+                        http.request(options, function(res) {
+                            util.log("success", 'http request to Storage Node (' + peer[j].address + ')');
+                        }).end();
+                    } catch(error) {
+                        util.log("error", error);
+                        return response.json({success: false, message: error});
+                    }
+                    return response.json({success: true, peerId: selectedStorage, SignalingServerURL: peer[j].address+":19200", roomName: peerId});
+                }
+            })
+            .catch((error) => {
+                return response.json({success: false, message: error});
+            });
+    } else {
+        return response.json({success: false, message: "no peerId"});
+    }
 });
 
 app.get('/api/Data', function (request, response) {
