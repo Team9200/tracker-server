@@ -89,6 +89,20 @@ app.get('/storageToStorage', function (request, response) {
     }
 });
 
+// Storage Node -> Storage Node [마이닝을 하는 Storage Node 리스트를 요청]
+// http://트래커서버ip:29200/findMiningStorage
+app.get('/findMiningStorage', function (request, response) {
+    PeerTable.findMiningStorage()
+            .then((peer) => {
+                if (peer) {
+                    return response.json({success: true, message: peer})
+                }
+            })
+            .catch((error) => {
+                return response.json({success: false, message: error});
+            });
+})
+
 // Collector Node -> Storage Node, Analysis Node -> Storage Node [스토리지 랜덤 선택 및 파일 전송 기능]
 // http://트래커서버ip:29200/sendToStorage?senderPeerId=보내는피어id
 app.get('/sendToStorage', function (request, response) {

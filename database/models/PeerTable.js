@@ -28,7 +28,7 @@ let PeerTable = Schema({
     },
     mining: {
         type: String,
-        enum: ["true", "flase"]
+        enum: ["true", "false"]
     }
 });
 
@@ -75,6 +75,10 @@ PeerTable.statics.findPeer = function (peerId) {
 
 PeerTable.statics.findStorage = function () {
     return this.find();
+}
+
+PeerTable.statics.findMiningStorage = function () {
+    return this.find({mining:"true"});
 }
 
 var PeerTableModel = mongoose.model('PeerTable', PeerTable);
