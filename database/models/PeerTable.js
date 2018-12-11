@@ -14,7 +14,7 @@ let PeerTable = Schema({
     nodeType: {
         type: String,
         require: true,
-        enum: ["storage", "analysis"]
+        enum: ["collector", "storage", "analysis"]
     },
     address: {
         type: String,

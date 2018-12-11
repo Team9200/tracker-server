@@ -126,16 +126,16 @@ app.get('/sendToStorage', function (request, response) {
                             break;
                         }
                     }
+                    try{
+                        var options = new URL('http://' + peer[j].address + ':39200/sendRequest?roomName=' + senderPeerId);
+                        http.request(options, function(res) {
+                            util.log("success", 'Send to Storage Node (' + peer[j].address + ')');
+                        }).end();
+                    } catch(error) {
+                        console.log("error", error);
+                    }
+                    return response.json({success: true, peerId: selectedStorage, SignalingServerURL: peer[j].address+":19200", roomName : senderPeerId});
                 }
-                try{
-                    var options = new URL('http://' + peer[j].address + ':39200/sendRequest?roomName=' + senderPeerId);
-                    http.request(options, function(res) {
-                        util.log("success", 'Send to Storage Node (' + peer[j].address + ')');
-                    }).end();
-                } catch(error) {
-                    console.log("error", error);
-                }
-                return response.json({success: true, peerId: selectedStorage, SignalingServerURL: peer[j].address+":19200", roomName : senderPeerId});
             })
             .catch((error) => {
                 return response.json({success: false, message: error});
