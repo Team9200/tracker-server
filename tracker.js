@@ -11,7 +11,7 @@ const cors = require('cors');
 var storageNodes = {};
 var selectedStorage;
 
-app.use({cors});
+app.use(cors());
 
 // Storage Node -> Tracker Server [Report 기능]
 // http://트래커서버ip:29200/report?peerId=피어id&nodeType=storage&storageSize=스토리지사이즈&remainingStorageSize=남은스토리지사이즈&mining=마이닝여부
