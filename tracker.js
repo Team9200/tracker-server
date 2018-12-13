@@ -73,8 +73,28 @@ app.get('/storageToStorage', function (request, response) {
                 if (peer) {
                     try{
                         var options = new URL('http://' + peer.address + ':39200/sendRequest?roomName=' + senderPeerId);
-                        http.request(options, function(res) {
-                        }).end();
+                        var req = http.request(options, function(res) {
+                        });
+                        req.on('error', function(error) {
+                            switch (error.code) {
+                                case 'ECONNRESET':
+                                    console.log(error);
+                                    break;
+                                
+                                case 'ECONNABORTED':
+                                    console.log(error);
+                                    break;
+
+                                case 'EPIPE':
+                                    console.log(error);
+                                    break;
+
+                                default:
+                                    console.log(error);
+                                    break;
+                            }
+                        });
+                        req.end();
                     } catch(error) {
                         util.log("error", error);
                     }
@@ -108,7 +128,7 @@ app.get('/findMiningStorage', function (request, response) {
 
 // Collector Node -> Storage Node, Analysis Node -> Storage Node [스토리지 랜덤 선택 및 파일 전송 기능]
 // http://트래커서버ip:29200/sendToStorage?senderPeerId=보내는피어id
-app.get('/sendToStorage', function (request, response) {
+app.get('/sendToStorage', function (request, response, next) {
     var senderPeerId = request.query.senderPeerId;
     var sumStorageSize = 0;
     var checkSumStorageSize = 0;
@@ -130,10 +150,30 @@ app.get('/sendToStorage', function (request, response) {
                         }
                     }
                     try{
-                        var options = new URL('http://' + peer[j].address + ':39200/sendRequest?roomName=' + senderPeerId);
-                        http.request(options, function(res) {
+                        var options = new URL('http://' + peer[j].address + ':39200/UnknownCtoS?collectorPid=' + senderPeerId);
+                        var req = http.request(options, function(res) {
                             util.log("success", 'Send to Storage Node (' + peer[j].address + ')');
-                        }).end();
+                        });
+                        req.on('error', function(error) {
+                            switch (error.code) {
+                                case 'ECONNRESET':
+                                    console.log(error);
+                                    break;
+                                
+                                case 'ECONNABORTED':
+                                    console.log(error);
+                                    break;
+
+                                case 'EPIPE':
+                                    console.log(error);
+                                    break;
+
+                                default:
+                                    console.log(error);
+                                    break;
+                            }
+                        });
+                        req.end();
                     } catch(error) {
                         util.log("error", error);
                         return response.json({success: false, message: error});
@@ -160,7 +200,7 @@ app.get('/findFile', function(request, response) {
                 for (var i = 0; i < peer.length; i++) {
                     try{
                         var options = new URL('http://'+ peer[i].address +':39200/findFile?fileHash=' + fileHash);
-                        http.request(options, function(res) {
+                        var req = http.request(options, function(res) {
                             var body = '';
                             res.on('data', function(data) {
                                 body += data;
@@ -179,7 +219,27 @@ app.get('/findFile', function(request, response) {
                                     return response.json({success: false});
                                 }
                             });
-                        }).end();
+                            req.on('error', function(error) {
+                                switch (error.code) {
+                                    case 'ECONNRESET':
+                                        console.log(error);
+                                        break;
+                                    
+                                    case 'ECONNABORTED':
+                                        console.log(error);
+                                        break;
+    
+                                    case 'EPIPE':
+                                        console.log(error);
+                                        break;
+    
+                                    default:
+                                        console.log(error);
+                                        break;
+                                }
+                            });
+                        });
+                        req.end();
                     } catch(error) {
                         util.log("error", error);
                         return response.json({success: false, message: error});
@@ -220,9 +280,29 @@ app.get('/reqUnknownFileToStorage', function (request, response) {
                     }
                     try{
                         var options = new URL('http://' + peer[j].address + ':39200/UnknownStoA?peerId=' + peerId);
-                        http.request(options, function(res) {
+                        var req = http.request(options, function(res) {
                             util.log("success", 'http request to Storage Node (' + peer[j].address + ')');
-                        }).end();
+                        });
+                        req.on('error', function(error) {
+                            switch (error.code) {
+                                case 'ECONNRESET':
+                                    console.log(error);
+                                    break;
+                                
+                                case 'ECONNABORTED':
+                                    console.log(error);
+                                    break;
+
+                                case 'EPIPE':
+                                    console.log(error);
+                                    break;
+
+                                default:
+                                    console.log(error);
+                                    break;
+                            }
+                        });
+                        req.end();
                     } catch(error) {
                         util.log("error", error);
                         return response.json({success: false, message: error});
@@ -253,6 +333,33 @@ app.get('/api/Data', function (request, response) {
             })
         });
 });
+
+app.get('/api/findPeer', function (request, response) {
+    const pub = request.query.publickey;
+    PeerTable.findPeer(pub)
+        .then((data) => {
+            return response.json({
+                success: true,
+                message: data
+            })
+        })
+        .catch((error) => {
+            return response.json({
+                success: false,
+                message: error
+            })
+        });
+});
+
+app.get('*', function(req, res, next) {
+    var error = new Error('Error Occurred');
+    error.status = 500;
+    next(error);
+})
+
+app.use(function(error, request, response, next) {
+    response.json({success: false, message: error});
+})
 
 app.listen(config.port, function () {
     util.log("success", "server on!");
