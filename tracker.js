@@ -150,7 +150,7 @@ app.get('/sendToStorage', function (request, response, next) {
                         }
                     }
                     try{
-                        var options = new URL('http://' + peer[j].address + ':39200/UnknownCtoS?collectorPid=' + senderPeerId);
+                        var options = new URL('http://' + peer[j].address + ':39200/UnknownCtoS?collectorPid=' + senderPeerId );
                         var req = http.request(options, function(res) {
                             util.log("success", 'Send to Storage Node (' + peer[j].address + ')');
                         });
@@ -193,13 +193,14 @@ app.get('/sendToStorage', function (request, response, next) {
 // http://트래커서버ip:29200/findFile?fileHash=찾는파일SHA256해쉬
 app.get('/findFile', function(request, response) {
     var fileHash = request.query.fileHash;
+    var finderPeerId = request.query.finderPeerId;
     var checkValue = 0;
     PeerTable.findStorage()
         .then((peer) => {
             if (peer) {
                 for (var i = 0; i < peer.length; i++) {
                     try{
-                        var options = new URL('http://'+ peer[i].address +':39200/findFile?fileHash=' + fileHash);
+                        var options = new URL('http://'+ peer[i].address +':39200/findFile?fileHash=' + fileHash + '&finderPeerId=' + finderPeerId);
                         var req = http.request(options, function(res) {
                             var body = '';
                             res.on('data', function(data) {
