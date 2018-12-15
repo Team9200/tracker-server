@@ -210,7 +210,7 @@ app.get('/findFile', function(request, response) {
                                 if (body == "success") {
                                     checkValue = checkValue + 1;
                                     util.log("success", 'Find File at Storage Node (' + peer[i].id + ')');
-                                    return response.json({success: true, storagePeerId: peer[i].id});
+                                    return response.json({success: true, storagePeerId: peer[i].id, SignalingServerURL: peer[i].address+":19200"});
                                 }
                                 else if (body == "fail") {
                                     return response.json({success: false});
